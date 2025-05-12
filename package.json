@@ -25,11 +25,13 @@
     "@prisma/client": "^6.7.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
+    "jest": "^29.7.0",
     "prisma": "^6.7.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.18",
     "@types/express": "^5.0.1",
+    "@types/jest": "^29.5.14",
     "@types/node": "^22.15.17",
     "typescript": "^5.8.3"
   }

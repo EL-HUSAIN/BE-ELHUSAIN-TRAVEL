@@ -8,9 +8,9 @@ router.get("/", (req, res) => {
 });
 
 // POST /api/visa/apply
-router.post("/apply", applyVisaHandler);
+router.post("/visa/apply", applyVisaHandler);
 
 // GET /api/visa/status/:id
-router.get("/status/:id", checkStatusHandler);
+router.get("/visa/status/:id", checkStatusHandler);
 
 export default router;

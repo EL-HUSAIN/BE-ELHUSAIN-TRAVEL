@@ -7,7 +7,7 @@ router.get("/", (req, res) => {
     res.send("Selamat Datang di API Visa Elhusein");
 });
 // POST /api/visa/apply
-router.post("/apply", visa_handler_1.applyVisaHandler);
+router.post("/visa/apply", visa_handler_1.applyVisaHandler);
 // GET /api/visa/status/:id
-router.get("/status/:id", visa_handler_1.checkStatusHandler);
+router.get("/visa/status/:id", visa_handler_1.checkStatusHandler);
 exports.default = router;
