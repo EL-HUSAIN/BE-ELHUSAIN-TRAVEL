@@ -41,21 +41,6 @@ Backend service untuk aplikasi Visa Elhusein menggunakan **Express.js**, **TypeS
     ```
 
 ## Struktur Folder
-src/
-├── dto/ # Data Transfer Object (DTO) - Definisi tipe request
-├── repository/ # Interaksi database menggunakan Prisma
-├── service/ # Logika bisnis aplikasi
-├── handler/ # Penanganan request HTTP
-├── route/ # Definisi rute Express
-└── index.ts # Entry point utama
-
-prisma/
-└── schema.prisma # Skema database
-
-.env # Variabel lingkungan
-package.json # Konfigurasi NPM
-tsconfig.json # Konfigurasi TypeScript
-
 
 ### Penjelasan:
 1. **`src/`**  
