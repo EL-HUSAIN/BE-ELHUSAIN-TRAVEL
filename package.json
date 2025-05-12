@@ -1,0 +1,27 @@
+{
+  "name": "be-elhusein-visa",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EL-HUSAIN/BE-ELHUSAIN-VISA.git"
+  },
+  "author": "el-husein",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EL-HUSAIN/BE-ELHUSAIN-VISA/issues"
+  },
+  "homepage": "https://github.com/EL-HUSAIN/BE-ELHUSAIN-VISA#readme",
+  "description": "",
+  "dependencies": {
+    "@prisma/client": "^6.7.0",
+    "express": "^5.1.0",
+    "prisma": "^6.7.0"
+  }
+}
