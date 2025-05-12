@@ -76,16 +76,3 @@ Backend service untuk aplikasi Visa Elhusein menggunakan **Express.js**, **TypeS
   "passportNumber": "A12345678",
   "nationality": "Indonesia"
 }
-
-📦src
- ┣ 📂dto
- ┃ ┗ 📜visa.dto.ts
- ┣ 📂handler
- ┃ ┗ 📜visa.handler.ts
- ┣ 📂repository
- ┃ ┗ 📜visa.repository.ts
- ┣ 📂routers
- ┃ ┗ 📜routes.ts
- ┣ 📂service
- ┃ ┗ 📜visa.service.ts
- ┗ 📜index.ts
