@@ -48,23 +48,31 @@ src/
 ├── handler/ # Penanganan request HTTP
 ├── route/ # Definisi rute Express
 └── index.ts # Entry point utama
+
 prisma/
 └── schema.prisma # Skema database
-.env/ # Variabel lingkungan
-package.json/ # Konfigurasi NPM
-tsconfig.json/ # Konfigurasi TypeScript
 
-Penjelasan:
+.env # Variabel lingkungan
+package.json # Konfigurasi NPM
+tsconfig.json # Konfigurasi TypeScript
 
-- dto/: Interface TypeScript untuk struktur data request
 
-- repository/: Kelas yang berinteraksi langsung dengan database
+### Penjelasan:
+1. **`src/`**  
+   - **`dto/`**: Berisi definisi Data Transfer Object (interface TypeScript) untuk validasi request  
+   - **`repository/`**: Layer untuk operasi database menggunakan Prisma Client  
+   - **`service/`**: Menampung logika bisnis dan validasi data  
+   - **`handler/`**: Mengolah request HTTP dan mengembalikan response  
+   - **`route/`**: Konfigurasi endpoint API  
+   - **`index.ts`**: File utama untuk inisialisasi server
 
-- service/: Logika bisnis dan validasi sebelum operasi database
+2. **`prisma/`**  
+   - **`schema.prisma`**: File konfigurasi model database dan migrasi
 
-- handler/: Mengolah request, memanggil service, dan mengirim response
-
-- route/: Mapping URL ke handler
+3. **File Root**  
+   - **`.env`**: Menyimpan environment variables (e.g., koneksi database)  
+   - **`package.json`**: Daftar dependencies dan project configuration  
+   - **`tsconfig.json`**: Konfigurasi compiler TypeScript
 
 ## 🚀 Endpoint & Testing
 
@@ -83,3 +91,16 @@ Penjelasan:
   "passportNumber": "A12345678",
   "nationality": "Indonesia"
 }
+
+📦src
+ ┣ 📂dto
+ ┃ ┗ 📜visa.dto.ts
+ ┣ 📂handler
+ ┃ ┗ 📜visa.handler.ts
+ ┣ 📂repository
+ ┃ ┗ 📜visa.repository.ts
+ ┣ 📂routers
+ ┃ ┗ 📜routes.ts
+ ┣ 📂service
+ ┃ ┗ 📜visa.service.ts
+ ┗ 📜index.ts
