@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,11 +7,76 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model VisaApplication {
-  id             Int      @id @default(autoincrement())
-  name           String
-  passportNumber String
-  nationality    String
-  status         String   @default("PENDING")
-  createdAt      DateTime @default(now())
+enum AccountType {
+  PERSONAL
+  ORGANIZATION
+}
+
+enum PostType {
+  BLOG
+  CATALOG
+  NEWS
+  INFORMATION
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+}
+
+/// Peran admin
+enum AdminRole {
+  SUPER
+  NORMAL
+}
+
+model User {
+  id           Int             @id @default(autoincrement())
+  email        String          @unique
+  passwordHash String
+  accountType  AccountType
+  createdAt    DateTime        @default(now())
+  profile      Profile?
+  resets       PasswordReset[]
+}
+
+model Profile {
+  userId           Int      @id
+  firstName        String
+  lastName         String
+  phoneNumber      String?
+  countryCode      String   @db.Char(2)
+  nationality      String   @db.Char(2)
+  organizationName String?
+  user             User     @relation(fields: [userId], references: [id])
+}
+
+model PasswordReset {
+  id         String   @id @default(uuid())
+  userId     Int
+  expiresAt  DateTime
+  user       User     @relation(fields: [userId], references: [id])
+}
+
+model Admin {
+  id           Int        @id @default(autoincrement())
+  email        String     @unique
+  passwordHash String
+  role         AdminRole  @default(NORMAL)
+  createdAt    DateTime   @default(now())
+  posts        Post[]     @relation("AdminPosts")
+}
+
+model Post {
+  id         Int        @id @default(autoincrement())
+  adminId    Int
+  type       PostType
+  title      String
+  slug       String     @unique
+  body       String
+  status     PostStatus @default(DRAFT)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  author     Admin      @relation("AdminPosts", fields: [adminId], references: [id])
 }

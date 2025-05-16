@@ -1,5 +1,12 @@
 import { Router } from "express";
-import { applyVisaHandler, checkStatusHandler } from "../handler/visa.handler";
+import {
+  registerHandler,
+  loginHandler,
+  forgotPasswordHandler,
+  resetPasswordHandler,
+  changePasswordHandler,
+} from "../handler/user.handler";
+import { authMiddleware } from "../middleware/auth.middleware";
 
 const router = Router();
 
@@ -7,10 +14,13 @@ router.get("/", (req, res) => {
   res.send("Selamat Datang di API Visa Elhusein");
 });
 
-// POST /api/visa/apply
-router.post("/visa/apply", applyVisaHandler);
+// Public endpoints
+router.post("/register", registerHandler);
+router.post("/login", loginHandler);
+router.post("/forgot-password", forgotPasswordHandler);
+router.post("/reset-password", resetPasswordHandler);
 
-// GET /api/visa/status/:id
-router.get("/visa/status/:id", checkStatusHandler);
+// Protected endpoint
+router.put("/change-password", authMiddleware, changePasswordHandler);
 
 export default router;
