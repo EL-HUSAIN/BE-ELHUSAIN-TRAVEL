@@ -5,7 +5,7 @@ Backend service untuk aplikasi Visa Elhusein menggunakan **Express.js**, **TypeS
 ---
 
 ## ERD Sistem VISA El-Husein
-[![DbDiagram]([https://img.shields.io/badge/Postman-Dokumentasi_API-orange?style=flat&logo=postman]([https://community.dbdiagram.io/uploads/default/original/1X/4431f78b1742115d112e87b93af510e8ce32d222.png))](https://app.getpostman.com/join-team?invite_code=c403bd4011a3a55cca91e880fa10a5c868707bc4dcec5488995b6e1dccad6220&target_code=10e471f4ea74edf99ad3f3693a04bbb3](https://dbdiagram.io/d/be-elhusein-visa-6826e54a1227bdcb4e96f3bd))
+[DBDiagram Link](https://dbdiagram.io/d/be-elhusein-visa-6826e54a1227bdcb4e96f3bd)
 
 ## Instalasi
 
