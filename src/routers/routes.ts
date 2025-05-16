@@ -7,6 +7,15 @@ import {
   changePasswordHandler,
 } from "../handler/user.handler";
 import { authMiddleware } from "../middleware/auth.middleware";
+import { adminLoginHandler } from "../handler/admin.handler";
+import { adminMiddleware } from "../middleware/admin.middleware";
+import {
+  createPostHandler,
+  deletePostHandler,
+  getPostHandler,
+  listPostsHandler,
+  updatePostHandler,
+} from "../handler/post.handler";
 
 const router = Router();
 
@@ -22,5 +31,15 @@ router.post("/reset-password", resetPasswordHandler);
 
 // Protected endpoint
 router.put("/change-password", authMiddleware, changePasswordHandler);
+
+// Admin endpoints
+router.post("/admin/login", adminLoginHandler);
+
+// Post endpoints
+router.post("/posts", authMiddleware, adminMiddleware, createPostHandler);
+router.get("/posts", listPostsHandler);
+router.get("/posts/:id", getPostHandler);
+router.put("/posts/:id", authMiddleware, adminMiddleware, updatePostHandler);
+router.delete("/posts/:id", authMiddleware, adminMiddleware, deletePostHandler);
 
 export default router;
