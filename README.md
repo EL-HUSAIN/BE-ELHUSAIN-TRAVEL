@@ -4,6 +4,9 @@ Backend service untuk aplikasi Visa Elhusein menggunakan **Express.js**, **TypeS
 
 ---
 
+## ERD Sistem VISA El-Husein
+[DBDiagram Link](https://dbdiagram.io/d/be-elhusein-visa-6826e54a1227bdcb4e96f3bd)
+
 ## Instalasi
 
 1. Clone repositori:
