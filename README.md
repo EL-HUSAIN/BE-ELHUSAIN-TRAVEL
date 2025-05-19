@@ -32,6 +32,12 @@ Backend service untuk aplikasi Visa Elhusein menggunakan **Express.js**, **TypeS
     npx prisma generate
     ```
 
+
+4. seeder data SUPER ADMIN
+    ```
+    npm run seed
+    ```
+
 ## Build & Start
 - Build TS
     ```

@@ -1,5 +1,5 @@
 // src/handler/post/post.handler.ts
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, RequestHandler } from "express";
 import {
   createPost,
   listPosts,
@@ -9,20 +9,34 @@ import {
 } from "../service/post.service";
 import { CreatePostDTO, UpdatePostDTO } from "../dto/post.dto";
 
-export async function createPostHandler(
-  req: Request & { user?: { id: number } },
-  res: Response,
-  next: NextFunction
-) {
+export const createPostHandler: RequestHandler = async (req, res, next) => {
   try {
-    const adminId = req.user!.id;
+    // ambil adminId dari authMiddleware
+    const adminId = (req as any).user.id as number;
+
+    // body fields
     const data = req.body as CreatePostDTO;
-    const post = await createPost(adminId, data);
+
+    // multer bisa menaruh req.files sebagai File[] atau { [key]: File[] }
+    const files = Array.isArray(req.files)
+      ? req.files
+      : Object.values(req.files ?? {}).flat();
+
+    // bangun imageUrls
+    const imageUrls = (files as Express.Multer.File[]).map(f => `/uploads/${f.filename}`);
+
+    // gabung ke DTO
+    const dto: CreatePostDTO = {
+      ...data,
+      imageUrls,
+    };
+
+    const post = await createPost(adminId, dto);
     res.status(201).json({ success: true, post });
   } catch (err) {
     next(err);
   }
-}
+};
 
 export async function listPostsHandler(
   req: Request,

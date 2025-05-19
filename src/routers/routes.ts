@@ -7,7 +7,10 @@ import {
   changePasswordHandler,
 } from "../handler/user.handler";
 import { authMiddleware } from "../middleware/auth.middleware";
-import { adminLoginHandler } from "../handler/admin.handler";
+import {
+  adminLoginHandler,
+  registerAdminHandler,
+} from "../handler/admin.handler";
 import { adminMiddleware } from "../middleware/admin.middleware";
 import {
   createPostHandler,
@@ -16,6 +19,7 @@ import {
   listPostsHandler,
   updatePostHandler,
 } from "../handler/post.handler";
+import { upload } from "../middleware/upload.middleware";
 
 const router = Router();
 
@@ -34,9 +38,21 @@ router.put("/change-password", authMiddleware, changePasswordHandler);
 
 // Admin endpoints
 router.post("/admin/login", adminLoginHandler);
+router.post(
+  "/admin/register",
+  authMiddleware,
+  adminMiddleware,
+  registerAdminHandler
+);
 
 // Post endpoints
-router.post("/posts", authMiddleware, adminMiddleware, createPostHandler);
+router.post(
+  "/posts",
+  authMiddleware,
+  adminMiddleware,
+  upload.array("images", 5),
+  createPostHandler
+);
 router.get("/posts", listPostsHandler);
 router.get("/posts/:id", getPostHandler);
 router.put("/posts/:id", authMiddleware, adminMiddleware, updatePostHandler);
