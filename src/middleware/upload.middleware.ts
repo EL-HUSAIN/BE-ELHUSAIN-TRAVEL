@@ -1,11 +1,19 @@
 // src/middleware/upload.middleware.ts
 import multer from "multer";
 import path from "path";
+import fs from "fs";
 
-// Simpan file di folder ./uploads dengan nama unik
+// Simpan file di folder ./uploads/posts dengan nama unik
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, "../../../uploads/posts"));
+    const uploadPath = path.join(__dirname, "../../../uploads/posts");
+
+    // Jika folder belum ada, buat (recursive untuk nested dirs)
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath, { recursive: true });
+    }
+
+    cb(null, uploadPath);
   },
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
