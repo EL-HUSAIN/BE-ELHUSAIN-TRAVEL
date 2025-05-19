@@ -5,7 +5,7 @@ import path from "path";
 // Simpan file di folder ./uploads dengan nama unik
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, "../../../uploads"));
+    cb(null, path.join(__dirname, "../../../uploads/posts"));
   },
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
