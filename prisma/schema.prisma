@@ -68,15 +68,18 @@ model Admin {
 }
 
 model Post {
-  id         Int        @id @default(autoincrement())
-  adminId    Int
-  type       PostType
-  title      String
-  slug       String     @unique
-  body       String
-  status     PostStatus @default(DRAFT)
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-
-  author     Admin      @relation("AdminPosts", fields: [adminId], references: [id])
+  id           Int         @id @default(autoincrement())
+  adminId      Int
+  type         PostType
+  title        String
+  slug         String      @unique
+  body         String
+  status       PostStatus  @default(DRAFT)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  isDeleted    Boolean     @default(false)
+  deletedAt    DateTime?   
+  publishedAt  DateTime?   
+  imageUrls    String[]    @default([])
+  author       Admin       @relation("AdminPosts", fields: [adminId], references: [id])
 }
