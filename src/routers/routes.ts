@@ -9,7 +9,11 @@ import {
 import { authMiddleware } from "../middleware/auth.middleware";
 import {
   adminLoginHandler,
+  deleteAdminHandler,
+  getAdminByIdHandler,
+  getAdminsHandler,
   registerAdminHandler,
+  updateAdminHandler,
 } from "../handler/admin.handler";
 import { adminMiddleware } from "../middleware/admin.middleware";
 import {
@@ -43,6 +47,20 @@ router.post(
   authMiddleware,
   adminMiddleware,
   registerAdminHandler
+);
+router.get("/admin/:id", authMiddleware, adminMiddleware, getAdminByIdHandler);
+router.get("/admin", authMiddleware, adminMiddleware, getAdminsHandler);
+router.put(
+  "/admin/:id",
+  authMiddleware,
+  adminMiddleware,
+  updateAdminHandler
+);
+router.delete(
+  "/admin/:id",
+  authMiddleware,
+  adminMiddleware,
+  deleteAdminHandler
 );
 
 // Post endpoints
