@@ -32,8 +32,6 @@ import {
   getCategoryBySlugHandler,
   updateCategoryHandler,
 } from "../handler/category.handler";
-import { get } from "http";
-import { create } from "domain";
 import {
   createTourPackageHandler,
   deleteTourPackageHandler,
@@ -43,7 +41,13 @@ import {
   updateTourPackageHandler,
 } from "../handler/tourPackage.handler";
 import { uploadPackageImage } from "../middleware/uploadPackages.middleware";
-import { createTourImageHandler, deleteTourImageHandler, getTourImageByIdHandler, getTourImagesByPackageHandler, updateTourImageHandler } from "../handler/tourImage.handler";
+import {
+  createTourImageHandler,
+  deleteTourImageHandler,
+  getTourImageByIdHandler,
+  getTourImagesByPackageHandler,
+  updateTourImageHandler,
+} from "../handler/tourImage.handler";
 
 const router = Router();
 
@@ -111,7 +115,7 @@ router.get(
   getCategoriesByIdHandler
 );
 router.get(
-  "/categories/:slug",
+  "/categories/slug/:slug",
   authMiddleware,
   adminMiddleware,
   getCategoryBySlugHandler

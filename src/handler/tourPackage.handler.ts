@@ -4,6 +4,7 @@ import {
   deleteTourPackageService,
   getTourPackageBySlugService,
   getTourPackagesService,
+  updateTourPackageService,
 } from "../service/tourPackage.service";
 
 export async function createTourPackageHandler(
@@ -128,10 +129,7 @@ export async function updateTourPackageHandler(
   const data = req.body;
 
   try {
-    const updatedTourPackage = await createTourPackageService({
-      ...data,
-      id: Number(id),
-    });
+    const updatedTourPackage = await updateTourPackageService(Number(id), data);
     res.status(200).json({
       message: "Tour package updated successfully",
       data: updatedTourPackage,
