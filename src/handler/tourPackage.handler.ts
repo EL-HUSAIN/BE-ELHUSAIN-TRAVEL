@@ -6,7 +6,10 @@ import {
   getTourPackagesService,
 } from "../service/tourPackage.service";
 
-export async function createTourPackageHandler(req: Request, res: Response) {
+export async function createTourPackageHandler(
+  req: Request,
+  res: Response
+): Promise<void> {
   const {
     title,
     slug,
@@ -31,19 +34,22 @@ export async function createTourPackageHandler(req: Request, res: Response) {
       isActive,
       categoryId: Number(categoryId),
     });
-    return res.status(201).json({
+    res.status(201).json({
       message: "Tour package created successfully",
       data: tourPackage,
     });
   } catch (error) {
-    return res.status(500).json({
+    res.status(500).json({
       message: "Internal Server Error",
       error: error instanceof Error ? error.message : "Unknown error",
     });
   }
 }
 
-export async function getTourPackagesHandler(req: Request, res: Response) {
+export async function getTourPackagesHandler(
+  req: Request,
+  res: Response
+): Promise<void> {
   const { categoryId, search } = req.query;
 
   try {
@@ -56,12 +62,12 @@ export async function getTourPackagesHandler(req: Request, res: Response) {
     }
 
     const tourPackages = await getTourPackagesService(filters);
-    return res.status(200).json({
+    res.status(200).json({
       message: "Tour packages retrieved successfully",
       data: tourPackages,
     });
   } catch (error) {
-    return res.status(500).json({
+    res.status(500).json({
       message: "Internal Server Error",
       error: error instanceof Error ? error.message : "Unknown error",
     });
@@ -76,16 +82,16 @@ export async function getTourPackageByIdHandler(req: Request, res: Response) {
       categoryId: Number(id),
     });
     if (!tourPackage) {
-      return res.status(404).json({
+      res.status(404).json({
         message: "Tour package not found",
       });
     }
-    return res.status(200).json({
+    res.status(200).json({
       message: "Tour package retrieved successfully",
       data: tourPackage,
     });
   } catch (error) {
-    return res.status(500).json({
+    res.status(500).json({
       message: "Internal Server Error",
       error: error instanceof Error ? error.message : "Unknown error",
     });
@@ -98,23 +104,26 @@ export async function getTourPackageBySlugHandler(req: Request, res: Response) {
   try {
     const tourPackage = await getTourPackageBySlugService(slug);
     if (!tourPackage) {
-      return res.status(404).json({
+      res.status(404).json({
         message: "Tour package not found",
       });
     }
-    return res.status(200).json({
+    res.status(200).json({
       message: "Tour package retrieved successfully",
       data: tourPackage,
     });
   } catch (error) {
-    return res.status(500).json({
+    res.status(500).json({
       message: "Internal Server Error",
       error: error instanceof Error ? error.message : "Unknown error",
     });
   }
 }
 
-export async function updateTourPackageHandler(req: Request, res: Response) {
+export async function updateTourPackageHandler(
+  req: Request,
+  res: Response
+): Promise<void> {
   const { id } = req.params;
   const data = req.body;
 
@@ -123,29 +132,32 @@ export async function updateTourPackageHandler(req: Request, res: Response) {
       ...data,
       id: Number(id),
     });
-    return res.status(200).json({
+    res.status(200).json({
       message: "Tour package updated successfully",
       data: updatedTourPackage,
     });
   } catch (error) {
-    return res.status(500).json({
+    res.status(500).json({
       message: "Internal Server Error",
       error: error instanceof Error ? error.message : "Unknown error",
     });
   }
 }
 
-export async function deleteTourPackageHandler(req: Request, res: Response) {
+export async function deleteTourPackageHandler(
+  req: Request,
+  res: Response
+): Promise<void> {
   const { id } = req.params;
 
   try {
     const deletedTourPackage = await deleteTourPackageService(Number(id));
-    return res.status(200).json({
+    res.status(200).json({
       message: "Tour package deleted successfully",
       data: deletedTourPackage,
     });
   } catch (error) {
-    return res.status(500).json({
+    res.status(500).json({
       message: "Internal Server Error",
       error: error instanceof Error ? error.message : "Unknown error",
     });

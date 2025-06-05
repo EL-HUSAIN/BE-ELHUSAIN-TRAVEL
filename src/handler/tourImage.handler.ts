@@ -17,12 +17,12 @@ export async function createTourImageHandler(req: Request, res: Response) {
       imageUrl,
       displayOrder,
     });
-    return res.status(201).json({
+    res.status(201).json({
       message: "Tour image created successfully",
       data: tourImage,
     });
   } catch (error) {
-    return res.status(500).json({
+    res.status(500).json({
       message: "Internal Server Error",
       error: error instanceof Error ? error.message : "Unknown error",
     });
@@ -32,74 +32,83 @@ export async function createTourImageHandler(req: Request, res: Response) {
 export async function getTourImagesByPackageHandler(
   req: Request,
   res: Response
-) {
+): Promise<void> {
   const { packageId } = req.params;
 
   try {
     const tourImages = await getTourImagesByPackageService(Number(packageId));
-    return res.status(200).json({
+    res.status(200).json({
       message: "Tour images retrieved successfully",
       data: tourImages,
     });
   } catch (error) {
-    return res.status(500).json({
+    res.status(500).json({
       message: "Internal Server Error",
       error: error instanceof Error ? error.message : "Unknown error",
     });
   }
 }
 
-export async function getTourImageByIdHandler(req: Request, res: Response) {
+export async function getTourImageByIdHandler(
+  req: Request,
+  res: Response
+): Promise<void> {
   const { id } = req.params;
 
   try {
     const tourImage = await getTourImageByIdService(Number(id));
     if (!tourImage) {
-      return res.status(404).json({
+      res.status(404).json({
         message: "Tour image not found",
       });
     }
-    return res.status(200).json({
+    res.status(200).json({
       message: "Tour image retrieved successfully",
       data: tourImage,
     });
   } catch (error) {
-    return res.status(500).json({
+    res.status(500).json({
       message: "Internal Server Error",
       error: error instanceof Error ? error.message : "Unknown error",
     });
   }
 }
 
-export async function updateTourImageHandler(req: Request, res: Response) {
+export async function updateTourImageHandler(
+  req: Request,
+  res: Response
+): Promise<void> {
   const { id } = req.params;
   const data = req.body;
 
   try {
     const updatedTourImage = await updateTourImageService(Number(id), data);
-    return res.status(200).json({
+    res.status(200).json({
       message: "Tour image updated successfully",
       data: updatedTourImage,
     });
   } catch (error) {
-    return res.status(500).json({
+    res.status(500).json({
       message: "Internal Server Error",
       error: error instanceof Error ? error.message : "Unknown error",
     });
   }
 }
 
-export async function deleteTourImageHandler(req: Request, res: Response) {
+export async function deleteTourImageHandler(
+  req: Request,
+  res: Response
+): Promise<void> {
   const { id } = req.params;
 
   try {
     const deletedTourImage = await deleteTourImageService(Number(id));
-    return res.status(200).json({
+    res.status(200).json({
       message: "Tour image deleted successfully",
       data: deletedTourImage,
     });
   } catch (error) {
-    return res.status(500).json({
+    res.status(500).json({
       message: "Internal Server Error",
       error: error instanceof Error ? error.message : "Unknown error",
     });
