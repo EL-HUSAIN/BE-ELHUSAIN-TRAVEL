@@ -23,13 +23,19 @@ export async function createTourPackageService(data: {
   return repoCreateTourPackage(data);
 }
 
-export async function getTourPackagesService(
-  filters: {
-    categoryId?: number;
-    search?: string;
-  } = {}
-): Promise<TourPackage[]> {
-  return repoGetTourPackages(filters);
+export async function getTourPackagesService(filters: {
+  categoryId?: number;
+  search?: string;
+  page?: number;
+  limit?: number;
+} = {}): Promise<TourPackage[]> {
+  const { page = 1, limit = 20, ...rest } = filters;
+  const skip = (page - 1) * limit;
+  return repoGetTourPackages({
+    ...rest,
+    skip,
+    take: limit,
+  });
 }
 
 export async function getTourPackageByIdService(

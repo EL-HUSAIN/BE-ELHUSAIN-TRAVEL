@@ -31,32 +31,32 @@ export async function createTourPackage(
   });
 }
 
+// src/repository/tourPackage/tourPackage.repository.ts
 export async function getTourPackages(
-  filters: {
+  params: {
     categoryId?: number;
     search?: string;
+    skip?: number;
+    take?: number;
   } = {}
 ): Promise<TourPackage[]> {
+  const { categoryId, search, skip, take } = params;
   const where: any = {};
 
-  if (filters.categoryId) {
-    where.categoryId = filters.categoryId;
-  }
-  if (filters.search) {
-    where.OR = [
-      { title: { contains: filters.search, mode: "insensitive" } },
-      { shortDescription: { contains: filters.search, mode: "insensitive" } },
-      { fullDescription: { contains: filters.search, mode: "insensitive" } },
-    ];
+  if (categoryId) where.categoryId = categoryId;
+  if (search) {
+    where.title = { contains: search, mode: "insensitive" };
   }
 
   return prisma.tourPackage.findMany({
     where,
     include: {
       category: true,
-      images: true,
+      images: { orderBy: { displayOrder: "asc" } },
     },
     orderBy: { createdAt: "desc" },
+    skip, // offset
+    take, // limit
   });
 }
 

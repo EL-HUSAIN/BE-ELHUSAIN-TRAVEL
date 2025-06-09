@@ -51,20 +51,29 @@ export async function getTourPackagesHandler(
   req: Request,
   res: Response
 ): Promise<void> {
-  const { categoryId, search } = req.query;
+  const { categoryId, search, page, limit } = req.query;
 
   try {
-    const filters: { categoryId?: number; search?: string } = {};
-    if (categoryId) {
-      filters.categoryId = Number(categoryId);
-    }
-    if (search) {
-      filters.search = String(search);
-    }
+    const filters: {
+      categoryId?: number;
+      search?: string;
+      page?: number;
+      limit?: number;
+    } = {};
+
+    if (categoryId) filters.categoryId = Number(categoryId);
+    if (search) filters.search = String(search);
+    if (page) filters.page = Number(page);
+    if (limit) filters.limit = Number(limit);
 
     const tourPackages = await getTourPackagesService(filters);
     res.status(200).json({
       message: "Tour packages retrieved successfully",
+      meta: {
+        page: filters.page ?? 1,
+        limit: filters.limit ?? 20,
+        count: tourPackages.length,
+      },
       data: tourPackages,
     });
   } catch (error) {
