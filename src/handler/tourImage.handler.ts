@@ -7,25 +7,57 @@ import {
   updateTourImageService,
   deleteTourImageService,
 } from "../service/tourImage.service";
+import path from "path";
 
-export async function createTourImageHandler(req: Request, res: Response) {
-  const { packageId } = req.params;
-  const { imageUrl, displayOrder } = req.body;
+export async function createTourImageHandler(
+  req: Request,
+  res: Response
+): Promise<void> {
+  // Pastikan file ada
+  if (!req.file) {
+    res.status(400).json({ message: "Image file is required" });
+    return; // <-- return void, bukan return res
+  }
+
+  const packageId = Number(req.params.packageId);
+  const displayOrder = req.body.displayOrder
+    ? Number(req.body.displayOrder)
+    : 0;
 
   try {
-    const tourImage = await createTourImageService(Number(packageId), {
+    // Ambil semua images
+    const existingImages = await getTourImagesByPackageService(packageId);
+    const conflict = existingImages.some(
+      (img) => img.displayOrder === displayOrder
+    );
+    if (conflict) {
+      res.status(400).json({
+        message: "Display order already exists for this package",
+      });
+      return;
+    }
+
+    // Bangun imageUrl
+    const imageUrl = path
+      .join("/uploads/packages", String(packageId), req.file.filename)
+      .replace(/\\/g, "/");
+
+    const tourImage = await createTourImageService(packageId, {
       imageUrl,
       displayOrder,
     });
+
     res.status(201).json({
       message: "Tour image created successfully",
       data: tourImage,
     });
-  } catch (error) {
+    return;
+  } catch (error: any) {
     res.status(500).json({
       message: "Internal Server Error",
-      error: error instanceof Error ? error.message : "Unknown error",
+      error: error.message,
     });
+    return;
   }
 }
 

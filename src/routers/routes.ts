@@ -173,17 +173,26 @@ router.delete(
 
 // Tour Image Routes
 router.post(
-  "/api/packages/:packageId/images",
+  "/tour-packages/:packageId/images",
   uploadPackageImage.single("image"),
+  authMiddleware,
+  adminMiddleware,
   createTourImageHandler
 );
-router.get("/api/packages/:packageId/images", getTourImagesByPackageHandler);
-router.get("/api/packages/:packageId/images/:id", getTourImageByIdHandler);
+router.get("/tour-packages/:packageId/images", getTourImagesByPackageHandler);
+router.get("/tour-packages/:packageId/images/:id", getTourImageByIdHandler);
 router.put(
-  "/api/packages/:packageId/images/:id",
+  "/tour-packages/:packageId/images/:id",
   uploadPackageImage.single("image"),
+  authMiddleware,
+  adminMiddleware,
   updateTourImageHandler
 );
-router.delete("/api/packages/:packageId/images/:id", deleteTourImageHandler);
+router.delete(
+  "/tour-packages/:packageId/images/:id",
+  authMiddleware,
+  adminMiddleware,
+  deleteTourImageHandler
+);
 
 export default router;
