@@ -83,3 +83,51 @@ model Post {
   imageUrls    String[]    @default([])
   author       Admin       @relation("AdminPosts", fields: [adminId], references: [id])
 }
+
+model Category {
+  id          Int         @id @default(autoincrement())
+  name        String      @unique
+  slug        String      @unique
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  packages    TourPackage[]
+
+  @@map("categories")
+}
+
+model TourPackage {
+  id          Int         @id @default(autoincrement())
+  title      String
+  slug       String      @unique
+  shortDescription String
+  fullDescription  String
+  price      Decimal? @db.Decimal(12, 2)
+  duration   String
+  mainImageUrl String
+  isActive   Boolean    @default(true)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  categoryId Int
+  category   Category   @relation(fields: [categoryId], references: [id])
+
+  images     TourImage[]
+
+  @@index([categoryId])
+  @@map("TourPackages")
+}
+
+model TourImage {
+  id          Int         @id @default(autoincrement())
+  imageUrl    String
+  displayOrder Int         @default(0)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  packageId   Int
+  package     TourPackage @relation(fields: [packageId], references: [id], onDelete: Cascade)
+
+  @@index([packageId])
+  @@map("TourImages")
+}

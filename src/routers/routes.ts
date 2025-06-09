@@ -24,6 +24,30 @@ import {
   updatePostHandler,
 } from "../handler/post.handler";
 import { upload } from "../middleware/upload.middleware";
+import {
+  createCategoryHandler,
+  deleteCategoryHandler,
+  getCategoriesByIdHandler,
+  getCategoriesHandler,
+  getCategoryBySlugHandler,
+  updateCategoryHandler,
+} from "../handler/category.handler";
+import {
+  createTourPackageHandler,
+  deleteTourPackageHandler,
+  getTourPackageByIdHandler,
+  getTourPackageBySlugHandler,
+  getTourPackagesHandler,
+  updateTourPackageHandler,
+} from "../handler/tourPackage.handler";
+import { uploadPackageImage } from "../middleware/uploadPackages.middleware";
+import {
+  createTourImageHandler,
+  deleteTourImageHandler,
+  getTourImageByIdHandler,
+  getTourImagesByPackageHandler,
+  updateTourImageHandler,
+} from "../handler/tourImage.handler";
 
 const router = Router();
 
@@ -50,12 +74,7 @@ router.post(
 );
 router.get("/admin/:id", authMiddleware, adminMiddleware, getAdminByIdHandler);
 router.get("/admin", authMiddleware, adminMiddleware, getAdminsHandler);
-router.put(
-  "/admin/:id",
-  authMiddleware,
-  adminMiddleware,
-  updateAdminHandler
-);
+router.put("/admin/:id", authMiddleware, adminMiddleware, updateAdminHandler);
 router.delete(
   "/admin/:id",
   authMiddleware,
@@ -75,5 +94,93 @@ router.get("/posts", listPostsHandler);
 router.get("/posts/:id", getPostHandler);
 router.put("/posts/:id", authMiddleware, adminMiddleware, updatePostHandler);
 router.delete("/posts/:id", authMiddleware, adminMiddleware, deletePostHandler);
+
+// Category Routes
+router.post(
+  "/categories",
+  authMiddleware,
+  adminMiddleware,
+  createCategoryHandler
+);
+router.get(
+  "/categories",
+  getCategoriesHandler
+);
+router.get(
+  "/categories/:id",
+  getCategoriesByIdHandler
+);
+router.get(
+  "/categories/slug/:slug",
+  getCategoryBySlugHandler
+);
+router.put(
+  "/categories/:id",
+  authMiddleware,
+  adminMiddleware,
+  updateCategoryHandler
+);
+router.delete(
+  "/categories/:id",
+  authMiddleware,
+  adminMiddleware,
+  deleteCategoryHandler
+);
+
+// Tour Package Routes
+router.post(
+  "/tour-packages",
+  authMiddleware,
+  adminMiddleware,
+  createTourPackageHandler
+);
+router.get(
+  "/tour-packages",
+  getTourPackagesHandler
+);
+router.get(
+  "/tour-packages/:id",
+  getTourPackageByIdHandler
+);
+router.get(
+  "/tour-packages/slug/:slug",
+  getTourPackageBySlugHandler
+);
+router.put(
+  "/tour-packages/:id",
+  authMiddleware,
+  adminMiddleware,
+  updateTourPackageHandler
+);
+router.delete(
+  "/tour-packages/:id",
+  authMiddleware,
+  adminMiddleware,
+  deleteTourPackageHandler
+);
+
+// Tour Image Routes
+router.post(
+  "/tour-packages/:packageId/images",
+  uploadPackageImage.single("image"),
+  authMiddleware,
+  adminMiddleware,
+  createTourImageHandler
+);
+router.get("/tour-packages/:packageId/images", getTourImagesByPackageHandler);
+router.get("/tour-packages/:packageId/images/:id", getTourImageByIdHandler);
+router.put(
+  "/tour-packages/:packageId/images/:id",
+  uploadPackageImage.single("image"),
+  authMiddleware,
+  adminMiddleware,
+  updateTourImageHandler
+);
+router.delete(
+  "/tour-packages/:packageId/images/:id",
+  authMiddleware,
+  adminMiddleware,
+  deleteTourImageHandler
+);
 
 export default router;

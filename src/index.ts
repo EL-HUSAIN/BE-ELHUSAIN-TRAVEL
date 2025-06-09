@@ -2,10 +2,11 @@ import express from "express";
 import routes from "./routers/routes";
 import bodyParser from "body-parser";
 import cors from "cors";
+import path from "path";
 
 const app = express();
 app.use(bodyParser.json());
-
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use(
   cors({
     origin: "*", // Menyediakan akses untuk semua origin (atau bisa sesuaikan dengan domain tertentu)
