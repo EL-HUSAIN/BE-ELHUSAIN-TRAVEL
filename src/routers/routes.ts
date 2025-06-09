@@ -104,20 +104,14 @@ router.post(
 );
 router.get(
   "/categories",
-  authMiddleware,
-  adminMiddleware,
   getCategoriesHandler
 );
 router.get(
   "/categories/:id",
-  authMiddleware,
-  adminMiddleware,
   getCategoriesByIdHandler
 );
 router.get(
   "/categories/slug/:slug",
-  authMiddleware,
-  adminMiddleware,
   getCategoryBySlugHandler
 );
 router.put(
@@ -142,20 +136,14 @@ router.post(
 );
 router.get(
   "/tour-packages",
-  authMiddleware,
-  adminMiddleware,
   getTourPackagesHandler
 );
 router.get(
   "/tour-packages/:id",
-  authMiddleware,
-  adminMiddleware,
   getTourPackageByIdHandler
 );
 router.get(
   "/tour-packages/slug/:slug",
-  authMiddleware,
-  adminMiddleware,
   getTourPackageBySlugHandler
 );
 router.put(
