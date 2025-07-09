@@ -88,18 +88,40 @@ export async function updateTourPackage(
   id: number,
   data: Partial<TourPackageData>
 ): Promise<TourPackage> {
+  // Pisahkan categoryId dari field lain
+  const {
+    categoryId,
+    title,
+    slug,
+    shortDescription,
+    fullDescription,
+    price,
+    duration,
+    mainImageUrl,
+    isActive,
+  } = data;
+
   return prisma.tourPackage.update({
     where: { id },
     data: {
-      title: data.title,
-      slug: data.slug,
-      shortDescription: data.shortDescription,
-      fullDescription: data.fullDescription,
-      price: data.price ?? null,
-      duration: data.duration,
-      mainImageUrl: data.mainImageUrl,
-      isActive: data.isActive ?? true,
-      categoryId: data.categoryId,
+      // scalar fields
+      title,
+      slug,
+      shortDescription,
+      fullDescription,
+      price: price ?? null,
+      duration,
+      mainImageUrl,
+      isActive: isActive ?? true,
+
+      // nested relation update untuk category
+      ...(categoryId != null
+        ? {
+            category: {
+              connect: { id: categoryId },
+            },
+          }
+        : {}),
     },
   });
 }
