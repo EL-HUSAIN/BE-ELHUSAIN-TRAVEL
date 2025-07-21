@@ -11,6 +11,7 @@ import {
 
 // Path dasar untuk menyimpan upload, sesuaikan dengan struktur proyek Anda
 const UPLOADS_BASE_DIR = path.join(__dirname, "../../uploads/packages"); // Mengasumsikan di root proyek ada folder 'uploads'
+const UPLOAD_DIR = path.join(process.cwd(), "");
 
 export async function createTourImageHandler(
   req: Request,
@@ -164,16 +165,57 @@ export async function deleteTourImageHandler(
 
     // Hapus juga file fisik dari server
     if (deletedTourImage.imageUrl) {
+      // imageUrl dari DB Anda adalah: "/uploads/packages/1/github-logo-1752038852022.png"
+      // Kita perlu menghilangkan bagian "/uploads/" dari imageUrl untuk mendapatkan path relatif
+      // dari UPLOAD_ROOT_DIR.
+
+      let imagePathInDb = deletedTourImage.imageUrl;
+
+      // Hapus '/' di awal jika ada
+      if (imagePathInDb.startsWith("/")) {
+        imagePathInDb = imagePathInDb.substring(1);
+      }
+
+      // Hapus prefiks 'uploads/' jika ada di imagePathInDb
+      // Ini adalah bagian kunci untuk menghindari duplikasi 'uploads'
+      const pathSegments = imagePathInDb
+        .split(path.sep)
+        .filter((segment) => segment !== ""); // Split by OS separator and remove empty strings
+
+      let filePathRelativeFromUploadRoot;
+      if (pathSegments[0] === "uploads") {
+        // Jika pathnya dimulai dengan 'uploads/', hilangkan 'uploads/' pertama
+        filePathRelativeFromUploadRoot = path.join(...pathSegments.slice(1));
+      } else {
+        // Jika tidak, gunakan path lengkap (ini skenario yang kurang umum jika konsisten)
+        filePathRelativeFromUploadRoot = path.join(...pathSegments);
+      }
+
       const filePathToDelete = path.join(
-        __dirname,
-        "../..",
-        deletedTourImage.imageUrl
+        UPLOAD_DIR,
+        filePathRelativeFromUploadRoot
       );
-      await fs
-        .unlink(filePathToDelete)
-        .catch((e) =>
-          console.error("Failed to delete physical image file:", e)
-        );
+
+      console.log("Image URL from DB (cleaned):", deletedTourImage.imageUrl);
+      console.log("Calculated UPLOAD_ROOT_DIR:", UPLOAD_DIR);
+      console.log(
+        "Relative path from uploads root:",
+        filePathRelativeFromUploadRoot
+      );
+      console.log("Attempting to delete file at:", filePathToDelete); // Log final path
+
+      await fs.unlink(filePathToDelete).catch((e) => {
+        // Hanya log jika errornya bukan ENOENT (file not found)
+        // Karena jika file sudah terhapus atau tidak pernah ada, kita tidak ingin gagal
+        if (e.code !== "ENOENT") {
+          console.error("Failed to delete physical image file:", e);
+        } else {
+          console.warn(
+            "Attempted to delete a file that does not exist:",
+            filePathToDelete
+          );
+        }
+      });
     }
 
     res.status(200).json({
@@ -181,6 +223,7 @@ export async function deleteTourImageHandler(
       data: deletedTourImage,
     });
   } catch (error) {
+    console.error("Error in deleteTourImageHandler:", error);
     res.status(500).json({
       message: "Internal Server Error",
       error: error instanceof Error ? error.message : "Unknown error",
