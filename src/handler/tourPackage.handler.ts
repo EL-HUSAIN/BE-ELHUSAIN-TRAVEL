@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import {
   createTourPackageService,
   deleteTourPackageService,
+  getTourPackageByIdService,
   getTourPackageBySlugService,
   getTourPackagesService,
   updateTourPackageService,
@@ -88,9 +89,7 @@ export async function getTourPackageByIdHandler(req: Request, res: Response) {
   const { id } = req.params;
 
   try {
-    const tourPackage = await getTourPackagesService({
-      categoryId: Number(id),
-    });
+    const tourPackage = await getTourPackageByIdService(Number(id));
     if (!tourPackage) {
       res.status(404).json({
         message: "Tour package not found",
