@@ -1,7 +1,9 @@
 import { Request, Response } from "express";
 import {
+  countTourPackagesService,
   createTourPackageService,
   deleteTourPackageService,
+  getTourPackageByIdService,
   getTourPackageBySlugService,
   getTourPackagesService,
   updateTourPackageService,
@@ -51,28 +53,41 @@ export async function getTourPackagesHandler(
   req: Request,
   res: Response
 ): Promise<void> {
-  const { categoryId, search, page, limit } = req.query;
+  const { categoryId, search, page, limit, sort } = req.query;
 
   try {
     const filters: {
       categoryId?: number;
       search?: string;
+      sortBy?: string;
       page?: number;
       limit?: number;
     } = {};
 
+    const pageNum = page ? Number(page) : 1;
+    const limitNum = limit ? Number(limit) : 20;
+
     if (categoryId) filters.categoryId = Number(categoryId);
     if (search) filters.search = String(search);
+    if (sort) filters.sortBy = String(sort);
     if (page) filters.page = Number(page);
     if (limit) filters.limit = Number(limit);
 
-    const tourPackages = await getTourPackagesService(filters);
+    const [tourPackages, totalCount] = await Promise.all([
+      getTourPackagesService(filters),
+      countTourPackagesService({
+        categoryId: filters.categoryId,
+        search: filters.search,
+      }),
+    ]);
     res.status(200).json({
       message: "Tour packages retrieved successfully",
       meta: {
-        page: filters.page ?? 1,
-        limit: filters.limit ?? 20,
-        count: tourPackages.length,
+        page: pageNum,
+        limit: limitNum,
+        count: tourPackages.length, // Jumlah data di halaman ini
+        totalCount: totalCount, // Total semua data yang cocok filter
+        totalPages: Math.ceil(totalCount / limitNum), // Total halaman
       },
       data: tourPackages,
     });
@@ -88,9 +103,7 @@ export async function getTourPackageByIdHandler(req: Request, res: Response) {
   const { id } = req.params;
 
   try {
-    const tourPackage = await getTourPackagesService({
-      categoryId: Number(id),
-    });
+    const tourPackage = await getTourPackageByIdService(Number(id));
     if (!tourPackage) {
       res.status(404).json({
         message: "Tour package not found",

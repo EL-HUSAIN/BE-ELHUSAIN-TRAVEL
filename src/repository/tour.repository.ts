@@ -1,5 +1,5 @@
 import prisma from "../../prisma/client";
-import { TourPackage } from "@prisma/client";
+import { Prisma, TourPackage } from "@prisma/client";
 
 export interface TourPackageData {
   title: string;
@@ -36,16 +36,38 @@ export async function getTourPackages(
   params: {
     categoryId?: number;
     search?: string;
+    sortBy?: string;
     skip?: number;
     take?: number;
   } = {}
 ): Promise<TourPackage[]> {
-  const { categoryId, search, skip, take } = params;
-  const where: any = {};
+  const { categoryId, search, sortBy = "newest", skip, take } = params;
+  const where: Prisma.TourPackageWhereInput = {};
 
   if (categoryId) where.categoryId = categoryId;
   if (search) {
-    where.title = { contains: search, mode: "insensitive" };
+    where.OR = [
+      { title: { contains: search, mode: "insensitive" } },
+      { shortDescription: { contains: search, mode: "insensitive" } },
+    ];
+  }
+
+  // Sorting
+  const orderBy: Prisma.TourPackageOrderByWithRelationInput = {};
+  switch (sortBy) {
+    case "price-low":
+      orderBy.price = "asc";
+      break;
+    case "price-high":
+      orderBy.price = "desc";
+      break;
+    case "name":
+      orderBy.title = "asc";
+      break;
+    case "newest":
+    default:
+      orderBy.createdAt = "desc";
+      break;
   }
 
   return prisma.tourPackage.findMany({
@@ -54,10 +76,33 @@ export async function getTourPackages(
       category: true,
       images: { orderBy: { displayOrder: "asc" } },
     },
-    orderBy: { createdAt: "desc" },
-    skip, // offset
-    take, // limit
+    orderBy, // Gunakan orderBy dinamis
+    skip,
+    take,
   });
+}
+
+export async function countTourPackages(
+  params: {
+    categoryId?: number;
+    search?: string;
+  } = {}
+): Promise<number> {
+  const { categoryId, search } = params;
+  const where: Prisma.TourPackageWhereInput = {};
+
+  if (categoryId) {
+    where.categoryId = categoryId;
+  }
+
+  if (search) {
+    where.OR = [
+      { title: { contains: search, mode: "insensitive" } },
+      { shortDescription: { contains: search, mode: "insensitive" } },
+    ];
+  }
+
+  return prisma.tourPackage.count({ where });
 }
 
 export async function getTourPackageById(
@@ -88,18 +133,40 @@ export async function updateTourPackage(
   id: number,
   data: Partial<TourPackageData>
 ): Promise<TourPackage> {
+  // Pisahkan categoryId dari field lain
+  const {
+    categoryId,
+    title,
+    slug,
+    shortDescription,
+    fullDescription,
+    price,
+    duration,
+    mainImageUrl,
+    isActive,
+  } = data;
+
   return prisma.tourPackage.update({
     where: { id },
     data: {
-      title: data.title,
-      slug: data.slug,
-      shortDescription: data.shortDescription,
-      fullDescription: data.fullDescription,
-      price: data.price ?? null,
-      duration: data.duration,
-      mainImageUrl: data.mainImageUrl,
-      isActive: data.isActive ?? true,
-      categoryId: data.categoryId,
+      // scalar fields
+      title,
+      slug,
+      shortDescription,
+      fullDescription,
+      price: price ?? null,
+      duration,
+      mainImageUrl,
+      isActive: isActive ?? true,
+
+      // nested relation update untuk category
+      ...(categoryId != null
+        ? {
+            category: {
+              connect: { id: categoryId },
+            },
+          }
+        : {}),
     },
   });
 }

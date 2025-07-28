@@ -6,7 +6,7 @@ import path from "path";
 
 const app = express();
 app.use(bodyParser.json());
-app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+app.use("/uploads", express.static(path.join(__dirname, "../../uploads")));
 app.use(
   cors({
     origin: "*", // Menyediakan akses untuk semua origin (atau bisa sesuaikan dengan domain tertentu)
