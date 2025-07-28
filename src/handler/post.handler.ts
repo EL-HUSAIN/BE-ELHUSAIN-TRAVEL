@@ -9,6 +9,7 @@ import {
   getPostBySlugService,
 } from "../service/post.service";
 import { CreatePostDTO, UpdatePostDTO } from "../dto/post.dto";
+import { countPosts, getPosts } from "../repository/post.repository";
 
 export const createPostHandler: RequestHandler = async (req, res, next) => {
   try {
@@ -47,12 +48,35 @@ export async function listPostsHandler(
   next: NextFunction
 ) {
   try {
+    const { type, status, search, sort, page, limit } = req.query;
+
+    const pageNum = page ? Number(page) : 1;
+    const limitNum = limit ? Number(limit) : 9;
+    const skip = (pageNum - 1) * limitNum;
+
     const filters = {
-      type: req.query.type as string,
-      status: req.query.status as string,
+      type: type as any,
+      status: status as any,
+      search: search as string,
+      sortBy: sort as string,
     };
-    const posts = await listPosts(filters);
-    res.json({ success: true, posts });
+
+    // Panggil data dan total count secara paralel
+    const [posts, totalCount] = await Promise.all([
+      getPosts({ ...filters, skip, take: limitNum }),
+      countPosts(filters),
+    ]);
+
+    res.json({
+      success: true,
+      meta: {
+        page: pageNum,
+        limit: limitNum,
+        totalCount,
+        totalPages: Math.ceil(totalCount / limitNum),
+      },
+      posts: posts,
+    });
   } catch (err) {
     next(err);
   }
