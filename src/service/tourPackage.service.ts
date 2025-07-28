@@ -6,6 +6,7 @@ import {
   getTourPackageBySlug as repoGetTourPackageBySlug,
   updateTourPackage as repoUpdateTourPackage,
   deleteTourPackage as repoDeleteTourPackage,
+  countTourPackages,
 } from "../repository/tour.repository";
 import { TourPackage } from "@prisma/client";
 
@@ -23,12 +24,15 @@ export async function createTourPackageService(data: {
   return repoCreateTourPackage(data);
 }
 
-export async function getTourPackagesService(filters: {
-  categoryId?: number;
-  search?: string;
-  page?: number;
-  limit?: number;
-} = {}): Promise<TourPackage[]> {
+export async function getTourPackagesService(
+  filters: {
+    categoryId?: number;
+    search?: string;
+    sortBy?: string;
+    page?: number;
+    limit?: number;
+  } = {}
+): Promise<TourPackage[]> {
   const { page = 1, limit = 20, ...rest } = filters;
   const skip = (page - 1) * limit;
   return repoGetTourPackages({
@@ -36,6 +40,15 @@ export async function getTourPackagesService(filters: {
     skip,
     take: limit,
   });
+}
+
+export async function countTourPackagesService(
+  filters: {
+    categoryId?: number;
+    search?: string;
+  } = {}
+): Promise<number> {
+  return countTourPackages(filters);
 }
 
 export async function getTourPackageByIdService(
