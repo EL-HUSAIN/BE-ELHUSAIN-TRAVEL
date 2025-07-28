@@ -6,6 +6,7 @@ import {
   getPost,
   updatePost,
   deletePost,
+  getPostBySlugService,
 } from "../service/post.service";
 import { CreatePostDTO, UpdatePostDTO } from "../dto/post.dto";
 
@@ -23,7 +24,9 @@ export const createPostHandler: RequestHandler = async (req, res, next) => {
       : Object.values(req.files ?? {}).flat();
 
     // bangun imageUrls
-    const imageUrls = (files as Express.Multer.File[]).map(f => `/uploads/${f.filename}`);
+    const imageUrls = (files as Express.Multer.File[]).map(
+      (f) => `/uploads/posts/${f.filename}`
+    );
 
     // gabung ke DTO
     const dto: CreatePostDTO = {
@@ -63,6 +66,23 @@ export async function getPostHandler(
   try {
     const id = Number(req.params.id);
     const post = await getPost(id);
+    res.json({ success: true, post });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function getPostBySlugHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const slug = req.params.slug;
+    const post = await getPostBySlugService(slug);
+    if (!post) {
+      res.status(404).json({ success: false, message: "Post not found" });
+    }
     res.json({ success: true, post });
   } catch (err) {
     next(err);

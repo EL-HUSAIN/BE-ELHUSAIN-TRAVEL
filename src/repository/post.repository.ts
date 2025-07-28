@@ -43,6 +43,15 @@ export async function getPostById(id: number): Promise<Post | null> {
   });
 }
 
+
+export async function getPostBySlug(
+  slug: string
+): Promise<Post | null> {
+  return prisma.post.findFirst({
+    where: { slug, isDeleted: false },
+  });
+}
+
 export async function updatePost(
   id: number,
   data: Partial<PostData>

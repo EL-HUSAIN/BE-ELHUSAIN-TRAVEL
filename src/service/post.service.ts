@@ -6,6 +6,7 @@ import {
   updatePost as repoUpdate,
   deletePost as repoDelete,
   PostData,
+  getPostBySlug,
 } from "../repository/post.repository";
 import { Post } from "@prisma/client";
 
@@ -27,6 +28,10 @@ export async function getPost(id: number): Promise<Post> {
   const post = await repoGetById(id);
   if (!post) throw new Error("Post not found");
   return post;
+}
+
+export async function getPostBySlugService(slug: string): Promise<Post | null> {
+  return getPostBySlug(slug);
 }
 
 export async function updatePost(
