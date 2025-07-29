@@ -6,8 +6,10 @@ import {
   getPost,
   updatePost,
   deletePost,
+  getPostBySlugService,
 } from "../service/post.service";
 import { CreatePostDTO, UpdatePostDTO } from "../dto/post.dto";
+import { countPosts, getPosts } from "../repository/post.repository";
 
 export const createPostHandler: RequestHandler = async (req, res, next) => {
   try {
@@ -23,7 +25,9 @@ export const createPostHandler: RequestHandler = async (req, res, next) => {
       : Object.values(req.files ?? {}).flat();
 
     // bangun imageUrls
-    const imageUrls = (files as Express.Multer.File[]).map(f => `/uploads/${f.filename}`);
+    const imageUrls = (files as Express.Multer.File[]).map(
+      (f) => `/uploads/posts/${f.filename}`
+    );
 
     // gabung ke DTO
     const dto: CreatePostDTO = {
@@ -44,12 +48,35 @@ export async function listPostsHandler(
   next: NextFunction
 ) {
   try {
+    const { type, status, search, sort, page, limit } = req.query;
+
+    const pageNum = page ? Number(page) : 1;
+    const limitNum = limit ? Number(limit) : 9;
+    const skip = (pageNum - 1) * limitNum;
+
     const filters = {
-      type: req.query.type as string,
-      status: req.query.status as string,
+      type: type as any,
+      status: status as any,
+      search: search as string,
+      sortBy: sort as string,
     };
-    const posts = await listPosts(filters);
-    res.json({ success: true, posts });
+
+    // Panggil data dan total count secara paralel
+    const [posts, totalCount] = await Promise.all([
+      getPosts({ ...filters, skip, take: limitNum }),
+      countPosts(filters),
+    ]);
+
+    res.json({
+      success: true,
+      meta: {
+        page: pageNum,
+        limit: limitNum,
+        totalCount,
+        totalPages: Math.ceil(totalCount / limitNum),
+      },
+      posts: posts,
+    });
   } catch (err) {
     next(err);
   }
@@ -63,6 +90,23 @@ export async function getPostHandler(
   try {
     const id = Number(req.params.id);
     const post = await getPost(id);
+    res.json({ success: true, post });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function getPostBySlugHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const slug = req.params.slug;
+    const post = await getPostBySlugService(slug);
+    if (!post) {
+      res.status(404).json({ success: false, message: "Post not found" });
+    }
     res.json({ success: true, post });
   } catch (err) {
     next(err);

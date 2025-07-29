@@ -1,6 +1,6 @@
 // src/repository/post/post.repository.ts
 import prisma from "../../prisma/client";
-import { Post, PostStatus, PostType } from "@prisma/client";
+import { Post, PostStatus, PostType, Prisma } from "@prisma/client";
 
 export interface PostData {
   title: string;
@@ -26,20 +26,87 @@ export async function createPost(
 }
 
 export async function getPosts(
-  filters: { type?: PostType; status?: PostStatus } = {}
+  params: {
+    type?: PostType;
+    status?: PostStatus;
+    search?: string;
+    sortBy?: string;
+    skip?: number;
+    take?: number;
+  } = {}
 ): Promise<Post[]> {
+  const { type, status, search, sortBy = "newest", skip, take } = params;
+  const where: Prisma.PostWhereInput = {
+    isDeleted: false,
+    ...(type && { type }),
+    ...(status && { status }),
+  };
+
+  // Tambahkan kondisi pencarian
+  if (search) {
+    where.OR = [
+      { title: { contains: search, mode: "insensitive" } },
+      { body: { contains: search, mode: "insensitive" } },
+    ];
+  }
+
+  // Tambahkan kondisi sorting
+  const orderBy: Prisma.PostOrderByWithRelationInput = {};
+  switch (sortBy) {
+    case "oldest":
+      orderBy.createdAt = "asc";
+      break;
+    case "title":
+      orderBy.title = "asc";
+      break;
+    case "newest":
+    default:
+      orderBy.createdAt = "desc";
+      break;
+  }
+
   return prisma.post.findMany({
-    where: {
-      isDeleted: false,
-      ...(filters.type ? { type: filters.type } : {}),
-      ...(filters.status ? { status: filters.status } : {}),
-    },
+    where,
+    orderBy,
+    skip,
+    take,
   });
+}
+
+// Fungsi baru untuk menghitung total post
+export async function countPosts(
+  params: {
+    type?: PostType;
+    status?: PostStatus;
+    search?: string;
+  } = {}
+): Promise<number> {
+  const { type, status, search } = params;
+  const where: Prisma.PostWhereInput = {
+    isDeleted: false,
+    ...(type && { type }),
+    ...(status && { status }),
+  };
+
+  if (search) {
+    where.OR = [
+      { title: { contains: search, mode: "insensitive" } },
+      { body: { contains: search, mode: "insensitive" } },
+    ];
+  }
+
+  return prisma.post.count({ where });
 }
 
 export async function getPostById(id: number): Promise<Post | null> {
   return prisma.post.findFirst({
     where: { id, isDeleted: false },
+  });
+}
+
+export async function getPostBySlug(slug: string): Promise<Post | null> {
+  return prisma.post.findFirst({
+    where: { slug, isDeleted: false },
   });
 }
 

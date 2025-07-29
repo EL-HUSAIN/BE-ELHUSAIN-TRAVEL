@@ -19,6 +19,7 @@ import { adminMiddleware } from "../middleware/admin.middleware";
 import {
   createPostHandler,
   deletePostHandler,
+  getPostBySlugHandler,
   getPostHandler,
   listPostsHandler,
   updatePostHandler,
@@ -92,6 +93,7 @@ router.post(
 );
 router.get("/posts", listPostsHandler);
 router.get("/posts/:id", getPostHandler);
+router.get("/posts/slug/:slug", getPostBySlugHandler);
 router.put("/posts/:id", authMiddleware, adminMiddleware, updatePostHandler);
 router.delete("/posts/:id", authMiddleware, adminMiddleware, deletePostHandler);
 
@@ -102,18 +104,9 @@ router.post(
   adminMiddleware,
   createCategoryHandler
 );
-router.get(
-  "/categories",
-  getCategoriesHandler
-);
-router.get(
-  "/categories/:id",
-  getCategoriesByIdHandler
-);
-router.get(
-  "/categories/slug/:slug",
-  getCategoryBySlugHandler
-);
+router.get("/categories", getCategoriesHandler);
+router.get("/categories/:id", getCategoriesByIdHandler);
+router.get("/categories/slug/:slug", getCategoryBySlugHandler);
 router.put(
   "/categories/:id",
   authMiddleware,
@@ -134,18 +127,9 @@ router.post(
   adminMiddleware,
   createTourPackageHandler
 );
-router.get(
-  "/tour-packages",
-  getTourPackagesHandler
-);
-router.get(
-  "/tour-packages/:id",
-  getTourPackageByIdHandler
-);
-router.get(
-  "/tour-packages/slug/:slug",
-  getTourPackageBySlugHandler
-);
+router.get("/tour-packages", getTourPackagesHandler);
+router.get("/tour-packages/:id", getTourPackageByIdHandler);
+router.get("/tour-packages/slug/:slug", getTourPackageBySlugHandler);
 router.put(
   "/tour-packages/:id",
   authMiddleware,
