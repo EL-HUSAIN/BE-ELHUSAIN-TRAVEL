@@ -113,20 +113,40 @@ export async function getPostBySlugHandler(
   }
 }
 
-export async function updatePostHandler(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
+export const updatePostHandler: RequestHandler = async (req, res, next) => {
   try {
     const id = Number(req.params.id);
-    const data = req.body as Partial<UpdatePostDTO>;
-    const post = await updatePost(id, data);
+
+    // parsing existing URLs (client wajib kirim imageUrls[])
+    const existing: string[] = req.body.imageUrls
+      ? Array.isArray(req.body.imageUrls)
+        ? req.body.imageUrls
+        : [req.body.imageUrls]
+      : [];
+
+    // parsing uploaded files (karena sekarang multer array dipasang)
+    const files = Array.isArray(req.files)
+      ? req.files
+      : Object.values(req.files ?? {}).flat();
+    const newUrls = (files as Express.Multer.File[]).map(
+      (f) => `/uploads/posts/${f.filename}`
+    );
+
+    // combine
+    const finalImageUrls = [...existing, ...newUrls];
+
+    // build DTO tanpa risiko undefined
+    const dto: Partial<UpdatePostDTO> & { imageUrls: string[] } = {
+      ...req.body,
+      imageUrls: finalImageUrls,
+    };
+
+    const post = await updatePost(id, dto);
     res.json({ success: true, post });
   } catch (err) {
     next(err);
   }
-}
+};
 
 export async function deletePostHandler(
   req: Request,

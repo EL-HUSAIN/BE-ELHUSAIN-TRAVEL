@@ -20,6 +20,7 @@ export async function createTourPackageService(data: {
   mainImageUrl: string;
   isActive?: boolean;
   categoryId: number;
+  features?: string[];
 }): Promise<TourPackage> {
   return repoCreateTourPackage(data);
 }
@@ -75,6 +76,7 @@ export async function updateTourPackageService(
     mainImageUrl: string;
     isActive?: boolean;
     categoryId: number;
+    features?: string[];
   }>
 ): Promise<TourPackage> {
   return repoUpdateTourPackage(id, data);

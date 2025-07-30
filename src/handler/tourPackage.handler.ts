@@ -23,6 +23,7 @@ export async function createTourPackageHandler(
     mainImageUrl,
     isActive = true,
     categoryId,
+    features,
   } = req.body;
 
   try {
@@ -36,6 +37,7 @@ export async function createTourPackageHandler(
       mainImageUrl,
       isActive,
       categoryId: Number(categoryId),
+      features: Array.isArray(features) ? features : [],
     });
     res.status(201).json({
       message: "Tour package created successfully",

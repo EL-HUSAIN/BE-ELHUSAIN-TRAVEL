@@ -113,6 +113,8 @@ model TourPackage {
   category   Category   @relation(fields: [categoryId], references: [id])
 
   images     TourImage[]
+  features         String[] @default([])
+
 
   @@index([categoryId])
   @@map("TourPackages")

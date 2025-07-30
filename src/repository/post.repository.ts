@@ -112,11 +112,16 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
 
 export async function updatePost(
   id: number,
-  data: Partial<PostData>
+  data: Partial<PostData> & { imageUrls?: string[] }
 ): Promise<Post> {
+  const { imageUrls, ...rest } = data;
   return prisma.post.update({
     where: { id },
-    data: { ...data, imageUrls: data.imageUrls },
+    data: {
+      ...rest,
+      // hanya masukkan kolom imageUrls kalau data.imageUrls !== undefined
+      ...(imageUrls ? { imageUrls } : {}),
+    },
   });
 }
 
