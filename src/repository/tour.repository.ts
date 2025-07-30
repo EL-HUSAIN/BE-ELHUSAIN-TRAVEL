@@ -11,6 +11,7 @@ export interface TourPackageData {
   mainImageUrl: string;
   isActive?: boolean;
   categoryId: number;
+  features?: string[];
 }
 
 export async function createTourPackage(
@@ -27,6 +28,7 @@ export async function createTourPackage(
       mainImageUrl: data.mainImageUrl,
       isActive: data.isActive ?? true,
       categoryId: data.categoryId,
+      features: data.features ?? [],
     },
   });
 }
@@ -144,6 +146,7 @@ export async function updateTourPackage(
     duration,
     mainImageUrl,
     isActive,
+    features,
   } = data;
 
   return prisma.tourPackage.update({
@@ -167,6 +170,7 @@ export async function updateTourPackage(
             },
           }
         : {}),
+      ...(data.features ? { features: data.features } : {}),
     },
   });
 }
