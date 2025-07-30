@@ -94,7 +94,13 @@ router.post(
 router.get("/posts", listPostsHandler);
 router.get("/posts/:id", getPostHandler);
 router.get("/posts/slug/:slug", getPostBySlugHandler);
-router.put("/posts/:id", authMiddleware, adminMiddleware, updatePostHandler);
+router.put(
+  "/posts/:id",
+  authMiddleware,
+  adminMiddleware,
+  upload.array("images", 5),
+  updatePostHandler
+);
 router.delete("/posts/:id", authMiddleware, adminMiddleware, deletePostHandler);
 
 // Category Routes
