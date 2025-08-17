@@ -53,7 +53,7 @@ import {
 const router = Router();
 
 router.get("/", (req, res) => {
-  res.send("Selamat Datang di API Visa Elhusein");
+  res.send("Selamat Datang di API Travel Elhusein — Versi 2.0 (terbaru)");
 });
 
 // Public endpoints
